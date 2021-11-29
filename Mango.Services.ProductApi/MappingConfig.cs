@@ -10,7 +10,7 @@ public class MappingConfig
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-            config.CreateMap<ProductDto, ProductDto>();
+            config.CreateMap<ProductDto, Product>();
             config.CreateMap<Product, ProductDto>();
         });
 

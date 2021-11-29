@@ -33,7 +33,7 @@ public class ProductService : BaseService, IProductService
         });
     }
 
-    public async Task<T> GetAllProducts<T>()
+    public async Task<T> GetAllProductsAsync<T>()
     {
         return await this.SendAsync<T>(new ApiRequest()
         {
@@ -43,7 +43,7 @@ public class ProductService : BaseService, IProductService
         });
     }
 
-    public async Task<T> GetProductsAsync<T>(int id)
+    public async Task<T> GetProductsByIdAsync<T>(int id)
     {
         return await this.SendAsync<T>(new ApiRequest()
         {

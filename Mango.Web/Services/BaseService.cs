@@ -42,7 +42,7 @@ public class BaseService : IBaseService
 
             var apiResponse = await client.SendAsync(message);
             var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var apiResponseDto = JsonSerializer.Deserialize<T>(apiContent);
+            var apiResponseDto = JsonSerializer.Deserialize<T>(apiContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return apiResponseDto;
         }
         catch (Exception e)
