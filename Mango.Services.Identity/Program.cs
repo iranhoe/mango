@@ -1,27 +1,75 @@
-var builder = WebApplication.CreateBuilder(args);
+using Mango.Services.Identity;
+using Mango.Services.Identity.DbContexts;
+using Mango.Services.Identity.Initializer;
+using Mango.Services.Identity.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+void AddServices(IServiceCollection service, ConfigurationManager configuration)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    // Add services to the container.
+    service.AddControllersWithViews();
+
+    service.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+    });
+    service.AddIdentity<ApplicationUser, IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+    var identityBuilder = service.AddIdentityServer(options =>
+        {
+            options.Events.RaiseErrorEvents = true;
+            options.Events.RaiseInformationEvents = true;
+            options.Events.RaiseFailureEvents = true;
+            options.Events.RaiseSuccessEvents = true;
+            options.EmitStaticAudienceClaim = true;
+        })
+        .AddInMemoryIdentityResources(SD.IdentityResources)
+        .AddInMemoryApiScopes(SD.ApiScopes)
+        .AddInMemoryClients(SD.Client)
+        .AddAspNetIdentity<ApplicationUser>();
+
+    service.AddScoped<IDbInitializer, DbInitializer>();
+
+    identityBuilder.AddDeveloperSigningCredential();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+void Configure(WebApplication app)
+{
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        app.UseHsts();
+    }
 
-app.UseRouting();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
 
-app.UseAuthorization();
+    app.UseRouting();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.UseIdentityServer();
+    app.UseAuthorization();
+    ConfigureAppServices(app);
 
-app.Run();
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    app.Run();
+}
+
+void ConfigureAppServices(IApplicationBuilder app)
+{
+    using var scope = app.ApplicationServices.CreateScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    dbInitializer.Initialize();
+}
+
+var builder = WebApplication.CreateBuilder(args);
+AddServices(builder.Services, builder.Configuration);
+
+var app = builder.Build();
+Configure(app);
+
+

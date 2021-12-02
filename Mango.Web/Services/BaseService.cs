@@ -51,6 +51,7 @@ public class BaseService : IBaseService
             {
                 DisplayMessage = "Error",
                 ErrorMessages = new List<string> { e.Message },
+                IsSuccess = false
             };
             var res = JsonSerializer.Serialize(dto);
             var apiResponseDto = JsonSerializer.Deserialize<T>(res);
