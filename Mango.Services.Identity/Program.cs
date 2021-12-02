@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 void AddServices(IServiceCollection service, ConfigurationManager configuration)
 {
-    // Add services to the container.
-    service.AddControllersWithViews();
+    
 
     service.AddDbContext<ApplicationDbContext>(options =>
     {
@@ -27,12 +26,15 @@ void AddServices(IServiceCollection service, ConfigurationManager configuration)
         })
         .AddInMemoryIdentityResources(SD.IdentityResources)
         .AddInMemoryApiScopes(SD.ApiScopes)
-        .AddInMemoryClients(SD.Client)
+        .AddInMemoryClients(SD.Clients)
         .AddAspNetIdentity<ApplicationUser>();
 
     service.AddScoped<IDbInitializer, DbInitializer>();
 
     identityBuilder.AddDeveloperSigningCredential();
+
+    // Add services to the container.
+    service.AddControllersWithViews();
 }
 
 void Configure(WebApplication app)

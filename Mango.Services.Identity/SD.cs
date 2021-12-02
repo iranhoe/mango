@@ -25,7 +25,7 @@ public class SD
             new("delete", "Delete your data.")
         };
 
-    public static IEnumerable<Client> Client =>
+    public static IEnumerable<Client> Clients =>
         new List<Client>()
         {
             new Client()
@@ -33,14 +33,15 @@ public class SD
                 ClientId = "mango",
                 ClientSecrets = { new Secret("secret".Sha256())},
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "https://localhost:7222/signin-oidc" },
-                PostLogoutRedirectUris = {"https://localhost:7222/signout-calleback-oidc"},
+                
+                RedirectUris = { "https://localhost:7004/signin-oidc" },
+                PostLogoutRedirectUris = {"https://localhost:7004/signout-calleback-oidc"},
                 AllowedScopes = new List<string>()
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
-                    "Mango"
+                    "mango"
                 }
             }
         };
