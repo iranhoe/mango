@@ -5,21 +5,33 @@ using System.Diagnostics;
 namespace Mango.Web.Controllers
 {
     using System.Reflection.Metadata.Ecma335;
+    using System.Text.Json;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
+    using Services.IServices;
 
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductService productService)
         {
             _logger = logger;
+            _productService = productService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<ProductDto>? list = new();
+            var response = await _productService.GetAllProductsAsync<ResponseDto>("");
+            if (response is {IsSuccess: true})
+            {
+                list = JsonSerializer.Deserialize<List<ProductDto>>(Convert.ToString(response.Result) ?? string.Empty, 
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            } 
+            
+            return View(list);
         }
 
         public IActionResult Privacy()
