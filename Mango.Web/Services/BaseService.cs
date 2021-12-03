@@ -1,5 +1,6 @@
 ﻿namespace Mango.Web.Services;
 
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using IServices;
@@ -29,6 +30,12 @@ public class BaseService : IBaseService
             {
                 message.Content = new StringContent(JsonSerializer.Serialize(apiRequest.Data), 
                     Encoding.UTF8, "application/json");
+            }
+
+            if (!string.IsNullOrEmpty(apiRequest.AccessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", 
+                    apiRequest.AccessToken);
             }
 
             message.Method = apiRequest.ApiType switch
