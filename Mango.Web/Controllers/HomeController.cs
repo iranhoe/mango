@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace Mango.Web.Controllers
 {
     using System.Reflection.Metadata.Ecma335;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
 
     public class HomeController : Controller
@@ -33,8 +34,9 @@ namespace Mango.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
             return RedirectToAction(nameof(Index));
         }
 
