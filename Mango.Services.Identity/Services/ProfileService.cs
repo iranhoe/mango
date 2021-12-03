@@ -37,17 +37,19 @@ public class ProfileService : IProfileService
         if (_userManager.SupportsUserRole)
         {
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            foreach (var rolename in roles)
+            foreach (var roleName in roles)
             {
-                claims.Add(new Claim(JwtClaimTypes.Role, rolename));
+                claims.Add(new Claim(JwtClaimTypes.Role, roleName));
                 if (!_roleMgr.SupportsRoleClaims) continue;
-                IdentityRole role = await _roleMgr.FindByNameAsync(rolename);
+                IdentityRole role = await _roleMgr.FindByNameAsync(roleName);
                 if (role != null)
                 {
                     claims.AddRange(await _roleMgr.GetClaimsAsync(role));
                 }
             }
         }
+
+        context.IssuedClaims = claims;
     }
 
     public async Task IsActiveAsync(IsActiveContext context)

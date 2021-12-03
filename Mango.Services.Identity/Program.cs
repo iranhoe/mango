@@ -1,22 +1,22 @@
+using Duende.IdentityServer.Services;
 using Mango.Services.Identity;
 using Mango.Services.Identity.DbContexts;
 using Mango.Services.Identity.Initializer;
 using Mango.Services.Identity.Models;
+using Mango.Services.Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-void AddServices(IServiceCollection service, ConfigurationManager configuration)
+void AddServices(IServiceCollection services, ConfigurationManager configuration)
 {
-    
-
-    service.AddDbContext<ApplicationDbContext>(options =>
+    services.AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
     });
-    service.AddIdentity<ApplicationUser, IdentityRole>()
+    services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-    var identityBuilder = service.AddIdentityServer(options =>
+    var identityBuilder = services.AddIdentityServer(options =>
         {
             options.Events.RaiseErrorEvents = true;
             options.Events.RaiseInformationEvents = true;
@@ -29,12 +29,13 @@ void AddServices(IServiceCollection service, ConfigurationManager configuration)
         .AddInMemoryClients(SD.Clients)
         .AddAspNetIdentity<ApplicationUser>();
 
-    service.AddScoped<IDbInitializer, DbInitializer>();
+    services.AddScoped<IDbInitializer, DbInitializer>();
+    services.AddScoped<IProfileService, ProfileService>();
 
     identityBuilder.AddDeveloperSigningCredential();
 
     // Add services to the container.
-    service.AddControllersWithViews();
+    services.AddControllersWithViews();
 }
 
 void Configure(WebApplication app)
