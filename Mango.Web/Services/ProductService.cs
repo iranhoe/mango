@@ -43,7 +43,7 @@ public class ProductService : BaseService, IProductService
         });
     }
 
-    public async Task<T> GetProductsByIdAsync<T>(int id, string token)
+    public async Task<T> GetProductByIdAsync<T>(int id, string token)
     {
         return await this.SendAsync<T>(new ApiRequest()
         {

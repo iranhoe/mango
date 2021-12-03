@@ -55,7 +55,7 @@ public class ProductController : Controller
     public async Task<IActionResult> ProductEdit(int productId)
     {
         var accessToken = await HttpContext.GetTokenAsync("access_token");
-        var response = await _productService.GetProductsByIdAsync<ResponseDto>(productId, accessToken);
+        var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
         if (response is not { IsSuccess: true })
         {
             return NotFound();
@@ -88,7 +88,7 @@ public class ProductController : Controller
     public async Task<IActionResult> ProductDelete(int productId)
     {
         var accessToken = await HttpContext.GetTokenAsync("access_token");
-        var response = await _productService.GetProductsByIdAsync<ResponseDto>(productId, accessToken);
+        var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
         if (response is not { IsSuccess: true })
         {
             return NotFound();

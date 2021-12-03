@@ -4,20 +4,16 @@ using System.Diagnostics;
 
 namespace Mango.Web.Controllers
 {
-    using System.Reflection.Metadata.Ecma335;
     using System.Text.Json;
-    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Services.IServices;
 
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger, IProductService productService)
+        public HomeController(IProductService productService)
         {
-            _logger = logger;
             _productService = productService;
         }
 
@@ -34,6 +30,21 @@ namespace Mango.Web.Controllers
             
             return View(list);
         }
+        
+        [Authorize]
+        public async Task<IActionResult> Details(int productId)
+        {
+            
+            ProductDto? model = new();
+            var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, "");
+            if (response is {IsSuccess: true})
+            {
+                model = JsonSerializer.Deserialize<ProductDto>(Convert.ToString(response.Result) ?? string.Empty, 
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            } 
+            
+            return View(model);
+        }
 
         public IActionResult Privacy()
         {
@@ -47,7 +58,7 @@ namespace Mango.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             return RedirectToAction(nameof(Index));
         }
