@@ -23,6 +23,7 @@ namespace Mango.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            
             List<ProductDto>? list = new();
             var response = await _productService.GetAllProductsAsync<ResponseDto>("");
             if (response is {IsSuccess: true})

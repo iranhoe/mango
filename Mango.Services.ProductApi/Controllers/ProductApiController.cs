@@ -18,7 +18,6 @@ public class ProductApiController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<ResponseDto> Get()
     {
         try
@@ -37,7 +36,6 @@ public class ProductApiController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("{id}")]
     public async Task<ResponseDto> Get(int id)
     {
