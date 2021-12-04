@@ -11,6 +11,6 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<Product> Products { get; set; }
-    public DbSet<CartHeader> Header { get; set; }
-    public DbSet<CartDetails> Details { get; set; }
+    public DbSet<CartHeader> CartHeader { get; set; }
+    public DbSet<CartDetails> CartDetails { get; set; }
 }
