@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using Models;
-using Repository.Dto;
+using Models.Dto;
 
 public class MappingConfig
 {

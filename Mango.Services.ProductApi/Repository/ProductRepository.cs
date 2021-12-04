@@ -2,9 +2,9 @@
 
 using AutoMapper;
 using DbContexts;
-using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Dto;
 
 public class ProductRepository : IProductRepository
 {

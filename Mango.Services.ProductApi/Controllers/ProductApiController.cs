@@ -2,8 +2,8 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Dto;
 using Repository;
-using Repository.Dto;
 
 [Route("api/products")]
 public class ProductApiController : ControllerBase
