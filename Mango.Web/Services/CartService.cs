@@ -28,7 +28,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartDto,
-            Url = SD.ShoppingCartAPIBase + "api/cart/AddCart",
+            Url = SD.ShoppingCartAPIBase + "api/Cart/AddCart",
             AccessToken = token
         });
     }

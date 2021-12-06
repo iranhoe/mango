@@ -34,7 +34,7 @@ public class CartController : ControllerBase
         return _response;
     }
     
-    [HttpPost("AddCart/{userId}")]
+    [HttpPost("AddCart")]
     public async Task<object> AddCart(CartDto cartDto)
     {
         try
@@ -51,7 +51,7 @@ public class CartController : ControllerBase
         return _response;
     }
     
-    [HttpPost("UpdateCart/{userId}")]
+    [HttpPost("UpdateCart")]
     public async Task<object> UpdateCart(CartDto cartDto)
     {
         try
@@ -68,7 +68,7 @@ public class CartController : ControllerBase
         return _response;
     }
     
-    [HttpPost("RemoveCart/{userId}")]
+    [HttpPost("RemoveCart")]
     public async Task<object> RemoveCart([FromBody]int cartId)
     {
         try

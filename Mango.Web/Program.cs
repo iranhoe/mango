@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Mango.Web;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
@@ -9,6 +10,9 @@ builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddHttpClient<ICartService, CartService>();
 SD.ProductAPIBase = builder.Configuration["ServiceUrls:ProductApi"];
 SD.ShoppingCartAPIBase = builder.Configuration["ServiceUrls:ShoppingCartApi"];
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();

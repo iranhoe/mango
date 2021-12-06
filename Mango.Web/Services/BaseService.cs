@@ -28,7 +28,8 @@ public class BaseService : IBaseService
             client.DefaultRequestHeaders.Clear();
             if (apiRequest.Data != null)
             {
-                message.Content = new StringContent(JsonSerializer.Serialize(apiRequest.Data), 
+                string content = JsonSerializer.Serialize(apiRequest.Data);
+                message.Content = new StringContent(content, 
                     Encoding.UTF8, "application/json");
             }
 

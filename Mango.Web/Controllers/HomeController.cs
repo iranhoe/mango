@@ -54,18 +54,21 @@ namespace Mango.Web.Controllers
         [Authorize]
         public async Task<IActionResult> DetailsPost(ProductDto productDto)
         {
+            string userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            
             CartDto cartDto = new()
             {
                 CartHeader = new CartHeaderDto()
                 {
-                    UserId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value
+                    UserId = userId,
+                    CouponCode = string.Empty
                 }
             };
 
             CartDetailsDto cartDetails = new CartDetailsDto()
             {
                 Count = productDto.Count,
-                ProductId = productDto.ProductId
+                ProductId = productDto.ProductId,
             };
 
             var resp = await _productService.GetProductByIdAsync<ResponseDto>(productDto.ProductId, "");
@@ -80,7 +83,7 @@ namespace Mango.Web.Controllers
             cartDetailsDtos.Add(cartDetails);
             cartDto.CartDetails = cartDetailsDtos;
 
-            var accessToken = await HttpContext.GetTokenAsync("access_toekn");
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
             var addToCartResp = await _cartService.AddToCartAsync<ResponseDto>(cartDto, accessToken);
             if (addToCartResp != null && addToCartResp.IsSuccess)
             {
