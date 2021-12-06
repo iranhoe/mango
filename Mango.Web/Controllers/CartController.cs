@@ -21,6 +21,20 @@ public class CartController : Controller
     {
         return View(await LoadCartDtoBasedOnLoggedInUser());
     }
+    
+    public async Task<ActionResult> Remove(int cartDetailsId)
+    {
+        var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+        var accessToken = await HttpContext.GetTokenAsync("access_token");
+        var response = await _cartService.RemoveFromCartAsync<ResponseDto>(cartDetailsId, accessToken);
+
+        if (response != null && response.IsSuccess)
+        {
+            return RedirectToAction(nameof(CartIndex));
+        }
+
+        return View();
+    }
 
     private async Task<CartDto> LoadCartDtoBasedOnLoggedInUser()
     {
