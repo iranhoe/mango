@@ -30,14 +30,14 @@ public class CartController : Controller
         return View(await LoadCartDtoBasedOnLoggedInUser());
     }
     
-    [HttpPost("checkout")]
+    [HttpPost]
     public async Task<ActionResult> Checkout(CartDto cartDto)
     {
         try
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var response = await _cartService.CheckoutAsync<ResponseDto>(cartDto.CartHeader, accessToken);
-            return RedirectToAction(nameof(Confrimation));
+            return RedirectToAction(nameof(Confirmation));
 
         }
         catch (Exception ex)
@@ -47,7 +47,7 @@ public class CartController : Controller
     }
     
     [HttpGet]
-    public async Task<ActionResult> Confrimation()
+    public async Task<ActionResult> Confirmation()
     {
         return View();
     }
