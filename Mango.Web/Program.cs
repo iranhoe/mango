@@ -18,6 +18,7 @@ JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(options =>
     {
