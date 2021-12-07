@@ -13,8 +13,8 @@ public class AzureServiceBusMessageBus : IMessageBus
     {
         ISenderClient senderClient = new TopicClient(connectionString, topicName);
 
-        var JsonMessage = JsonSerializer.Serialize(message);
-        var finalMessage = new Message(Encoding.UTF8.GetBytes(JsonMessage))
+        var jsonMessage = JsonSerializer.Serialize(message);
+        var finalMessage = new Message(Encoding.UTF8.GetBytes(jsonMessage))
         {
             CorrelationId = Guid.NewGuid().ToString()
         };
