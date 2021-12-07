@@ -1,4 +1,5 @@
 using Mango.Services.OrderAPI.DbContexts;
+using Mango.Services.OrderAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -59,15 +60,18 @@ builder.Services.AddSwaggerGen(c =>
 
     });
 });
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+
+var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection"); 
+builder.Services.AddDbContext<ApplicationDbContext>(options => 
+    options.UseSqlServer(defaultConnection));
 
 // var mapper = MappingConfig.RegisterMaps().CreateMapper();
 // builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-// builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+optionsBuilder.UseSqlServer(defaultConnection);
+builder.Services.AddSingleton(new OrderRepository(optionsBuilder.Options));
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
