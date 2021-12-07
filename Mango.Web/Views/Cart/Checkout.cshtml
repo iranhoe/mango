@@ -1,4 +1,5 @@
-﻿@model Mango.Web.Models.CartDto
+﻿@using System.Reflection.Metadata
+@model Mango.Web.Models.CartDto
 
 @if (Model != null && Model.CartDetails.Count() > 0)
 {
@@ -116,4 +117,15 @@
             </div>
         </div>
     </form>
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".form_datetime").datetimepicker({ format: 'yyyy-mm-dd hh:ii'});    
+        $(".form_datetime").datetimepicker('setStartDate', new Date());    
+        
+    })
+    </script>
 }
