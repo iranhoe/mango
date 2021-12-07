@@ -3,15 +3,20 @@
 using System.Text;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Options;
 
 public class AzureServiceBusMessageBus : IMessageBus
 {
     //can be improved
-    private string connectionString = "";
+    private readonly string _connectionString = "";
+
+    public AzureServiceBusMessageBus(IOptions<Config> options)
+    {
+        _connectionString = options.Value.ConnectionString;
+    }
     public async Task PublishMessage(BaseMessage message, string topicName)
     {
-        // ISenderClient senderClient = new TopicClient(connectionString, topicName);
-        await using var client = new ServiceBusClient(connectionString);
+        await using var client = new ServiceBusClient(_connectionString);
         ServiceBusSender sender = client.CreateSender(topicName);
 
         var jsonMessage = JsonSerializer.Serialize(message, message.GetType());

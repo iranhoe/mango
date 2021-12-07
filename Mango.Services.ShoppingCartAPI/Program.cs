@@ -73,6 +73,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IMessageBus, AzureServiceBusMessageBus>();
+builder.Services.Configure<Config>(options => builder.Configuration.GetSection("ServiceBus").Bind(options));
 
 var app = builder.Build();
 
