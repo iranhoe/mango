@@ -5,13 +5,13 @@ using Models.Dto;
 using Repository;
 
 [ApiController]
-[Route("api/[controller]")]
-public class CouponController : ControllerBase
+[Route("api/coupon")]
+public class CouponAPIController : ControllerBase
 {
     private readonly ICouponRepository _couponRepository;
     protected ResponseDto _response;
 
-    public CouponController(ICouponRepository couponRepository, ResponseDto response)
+    public CouponAPIController(ICouponRepository couponRepository, ResponseDto response)
     {
         _couponRepository = couponRepository;
         _response = new ResponseDto();

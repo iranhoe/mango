@@ -5,13 +5,13 @@ using Models.Dto;
 using Repository;
 
 [ApiController]
-[Route("api/[controller]")]
-public class CartController : ControllerBase
+[Route("api/cart")]
+public class CartAPIController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
     protected ResponseDto _response;
 
-    public CartController(ICartRepository cartRepository)
+    public CartAPIController(ICartRepository cartRepository)
     {
         _cartRepository = cartRepository;
         this._response = new ResponseDto();
