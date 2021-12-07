@@ -67,7 +67,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // var mapper = MappingConfig.RegisterMaps().CreateMapper();
 // builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-// builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+// builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
