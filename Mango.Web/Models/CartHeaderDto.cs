@@ -14,4 +14,5 @@ public class CartHeaderDto
     public string CardNumber { get; set; }
     public string CVV { get; set; }
     public string ExpiryMonthYear { get; set; }
+    public string Phone { get; set; }
 }

@@ -24,6 +24,12 @@ public class CartController : Controller
         return View(await LoadCartDtoBasedOnLoggedInUser());
     }
     
+    [HttpGet]
+    public async Task<ActionResult> Checkout()
+    {
+        return View(await LoadCartDtoBasedOnLoggedInUser());
+    }
+    
     [HttpPost]
     [ActionName("ApplyCoupon")]
     public async Task<ActionResult> ApplyCoupon(CartDto cartDto)
