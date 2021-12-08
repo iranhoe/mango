@@ -10,10 +10,12 @@ using Repository;
 public class AzureServiceBusConsumer
 {
     private readonly string serviceBusConnectionString;
-    private readonly string subscriptionName;
+    private readonly string subscriptionCheckout;
     private readonly string checkoutMessageTopic;
     private readonly OrderRepository _orderRepository;
     private readonly IConfiguration _configuration;
+
+    private ServiceBusProcessor checkOutProcessor;
 
     public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
     {
@@ -21,8 +23,30 @@ public class AzureServiceBusConsumer
         _configuration = configuration;
 
         serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
-        subscriptionName = _configuration.GetValue<string>("CheckoutMessageTopic");
-        checkoutMessageTopic = _configuration.GetValue<string>("SubscriptionName");
+        subscriptionCheckout = _configuration.GetValue<string>("SubscriptionName");
+        checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
+
+        var client = new ServiceBusClient(serviceBusConnectionString);
+        checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
+    }
+
+    public async Task Start()
+    {
+        checkOutProcessor.ProcessMessageAsync += OnCeckOutMessageReceived;
+        checkOutProcessor.ProcessErrorAsync += ErrorHandler;
+        await checkOutProcessor.StartProcessingAsync();
+    }
+
+    public async Task Stop()
+    {
+        await checkOutProcessor.StopProcessingAsync();
+        await checkOutProcessor.DisposeAsync();
+    }
+
+    Task ErrorHandler(ProcessErrorEventArgs args)
+    {
+        Console.WriteLine(args.Exception.ToString());
+        return Task.CompletedTask;
     }
 
     private async Task OnCeckOutMessageReceived(ProcessMessageEventArgs args)
