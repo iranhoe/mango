@@ -9,11 +9,20 @@ using Repository;
 
 public class AzureServiceBusConsumer
 {
+    private readonly string serviceBusConnectionString;
+    private readonly string subscriptionName;
+    private readonly string checkoutMessageTopic;
     private readonly OrderRepository _orderRepository;
+    private readonly IConfiguration _configuration;
 
-    public AzureServiceBusConsumer(OrderRepository orderRepository)
+    public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
     {
         _orderRepository = orderRepository;
+        _configuration = configuration;
+
+        serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+        subscriptionName = _configuration.GetValue<string>("CheckoutMessageTopic");
+        checkoutMessageTopic = _configuration.GetValue<string>("SubscriptionName");
     }
 
     private async Task OnCeckOutMessageReceived(ProcessMessageEventArgs args)
