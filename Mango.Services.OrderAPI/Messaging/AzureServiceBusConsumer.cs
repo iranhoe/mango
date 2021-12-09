@@ -14,6 +14,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     private readonly string subscriptionCheckout;
     private readonly string checkoutMessageTopic;
     private readonly OrderRepository _orderRepository;
+    private readonly string orderPaymentProcessTopic;
     
     private ServiceBusProcessor checkOutProcessor;
 
@@ -30,6 +31,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
         subscriptionCheckout = _configuration.GetValue<string>("SubscriptionName");
         checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
+        orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
 
         var client = new ServiceBusClient(serviceBusConnectionString);
         checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
@@ -107,7 +109,8 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 
         try
         {
-            await _messageBus.PublishMessage(paymentRequestMessage, );
+            await _messageBus.PublishMessage(paymentRequestMessage, orderPaymentProcessTopic);
+            await args.CompleteMessageAsync(args.Message);
         }
         catch (Exception ex)
         {
