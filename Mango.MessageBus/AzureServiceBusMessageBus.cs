@@ -3,16 +3,20 @@
 using System.Text;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 public class AzureServiceBusMessageBus : IMessageBus
 {
+    private readonly IConfiguration _configuration;
+
     //can be improved
     private readonly string _connectionString = "";
 
-    public AzureServiceBusMessageBus(IOptions<Config> options)
+    public AzureServiceBusMessageBus(IConfiguration configuration)
     {
-        _connectionString = options.Value.ConnectionString;
+        _configuration = configuration;
+        _connectionString = _configuration.GetValue<string>("ServiceBusConnectionString");;
     }
     public async Task PublishMessage(BaseMessage message, string topicName)
     {
