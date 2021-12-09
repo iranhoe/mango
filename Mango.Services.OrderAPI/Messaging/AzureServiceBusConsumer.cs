@@ -3,6 +3,7 @@
 using System.Text;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using MessageBus;
 using Messages;
 using Models;
 using Repository;
@@ -13,14 +14,18 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     private readonly string subscriptionCheckout;
     private readonly string checkoutMessageTopic;
     private readonly OrderRepository _orderRepository;
-    private readonly IConfiguration _configuration;
-
+    
     private ServiceBusProcessor checkOutProcessor;
 
-    public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
+    private readonly IConfiguration _configuration;
+    private readonly IMessageBus _messageBus;
+
+
+    public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration, IMessageBus messageBus)
     {
         _orderRepository = orderRepository;
         _configuration = configuration;
+        _messageBus = messageBus;
 
         serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
         subscriptionCheckout = _configuration.GetValue<string>("SubscriptionName");
@@ -90,5 +95,24 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         }
 
         await _orderRepository.AddOrder(orderHeader);
+        PaymentRequestMessage paymentRequestMessage = new()
+        {
+            Name = orderHeader.FirstName + " " + orderHeader.LastName,
+            CardNumber = orderHeader.CardNumber,
+            CVV = orderHeader.CVV,
+            ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+            OrderId = orderHeader.OrderHeaderId,
+            OrderTotal = orderHeader.OrderTotal
+        };
+
+        try
+        {
+            await _messageBus.PublishMessage(paymentRequestMessage, );
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 }
