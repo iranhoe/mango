@@ -22,7 +22,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = false
         };
     });
-
+builder.Services.AddHttpClient<ICouponRepository, CouponRepository>(u =>
+    u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ApiScope", policy =>
