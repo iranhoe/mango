@@ -12,18 +12,18 @@ public static class ApplicationBuilderExtensions
         var hostApplicationLife = app.ApplicationServices.GetService<IHostApplicationLifetime>();
 
         hostApplicationLife.ApplicationStarted.Register(OnStart);
-        hostApplicationLife.ApplicationStarted.Register(OnStop);
+        hostApplicationLife.ApplicationStopped.Register(OnStop);
 
         return app;
     }
 
     private static void OnStop()
     {
-        ServiceBusConsumer.Start();
+        ServiceBusConsumer.Stop();
     }
 
     private static void OnStart()
     {
-        ServiceBusConsumer.Stop();
+        ServiceBusConsumer.Start();
     }
 }
