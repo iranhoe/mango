@@ -1,11 +1,29 @@
 ﻿namespace Mango.Services.ShoppingCartAPI.Repository;
 
+using System.Text.Json;
 using Models.Dto;
 
 public class CouponRepository : ICouponRepository
 {
-    public Task<CouponDto> GetCoupon(string couponName)
+    private readonly HttpClient client;
+
+    public CouponRepository(HttpClient client)
     {
-        throw new NotImplementedException();
+        this.client = client;
+    }
+
+    public async Task<CouponDto> GetCoupon(string couponName)
+    {
+        var options = new JsonSerializerOptions() {PropertyNameCaseInsensitive = true};
+        var response = await client.GetAsync($"api/coupon/{couponName}");
+        var apiContent = await response.Content.ReadAsStringAsync();
+        var resp = JsonSerializer.Deserialize<ResponseDto>(apiContent, options);
+
+        if (resp.IsSuccess)
+        {
+            return JsonSerializer.Deserialize<CouponDto>(Convert.ToString(resp.Result), options);
+        }
+
+        return new CouponDto();
     }
 }
