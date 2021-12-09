@@ -7,7 +7,7 @@ using Messages;
 using Models;
 using Repository;
 
-public class AzureServiceBusConsumer
+public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 {
     private readonly string serviceBusConnectionString;
     private readonly string subscriptionCheckout;
