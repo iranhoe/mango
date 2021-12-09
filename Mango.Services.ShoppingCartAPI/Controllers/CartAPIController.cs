@@ -11,13 +11,15 @@ using Repository;
 public class CartAPIController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
+    private readonly ICouponRepository _couponRepository;
     private readonly IMessageBus _messageBus;
     protected ResponseDto _response;
 
-    public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus)
+    public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
     {
         _cartRepository = cartRepository;
         _messageBus = messageBus;
+        _couponRepository = couponRepository;
         this._response = new ResponseDto();
     }
 
@@ -133,6 +135,18 @@ public class CartAPIController : ControllerBase
             if (cartDto == null)
             {
                 return BadRequest();
+            }
+
+            if (!string.IsNullOrEmpty(checkoutHeader.CouponCode))
+            {
+                CouponDto couponDto = await _couponRepository.GetCoupon(checkoutHeader.CouponCode);
+                if (checkoutHeader.DiscountTotal != couponDto.DiscountAmount)
+                {
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string>() {"Coupon Price has changed, please confirm"};
+                    _response.DisplayMessage = "Coupon Price has changed, please confirm";
+                    return _response;
+                }
             }
 
             checkoutHeader.CartDetails = cartDto.CartDetails;
