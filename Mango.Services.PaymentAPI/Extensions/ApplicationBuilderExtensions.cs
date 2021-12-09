@@ -1,7 +1,6 @@
-﻿namespace Mango.Services.OrderAPI.Extensions;
+﻿namespace Mango.Services.PaymentAPI.Extensions;
 
-using Messages;
-using Messaging;
+using OrderAPI.Messaging;
 
 public static class ApplicationBuilderExtensions
 {

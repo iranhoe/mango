@@ -1,4 +1,4 @@
-﻿namespace Mango.Services.OrderAPI.Messages;
+﻿namespace Mango.Services.OrderAPI.Messaging;
 
 public interface IAzureServiceBusConsumer
 {
