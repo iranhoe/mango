@@ -15,8 +15,10 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     private readonly string checkoutMessageTopic;
     private readonly OrderRepository _orderRepository;
     private readonly string orderPaymentProcessTopic;
+    private readonly string orderUpdatePaymentResultTopic;
     
     private ServiceBusProcessor checkOutProcessor;
+    private ServiceBusProcessor orderUpdatePaymentStatusProcessor;
 
     private readonly IConfiguration _configuration;
     private readonly IMessageBus _messageBus;
@@ -32,22 +34,31 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         subscriptionCheckout = _configuration.GetValue<string>("SubscriptionName");
         checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
         orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
+        orderUpdatePaymentResultTopic = _configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
 
         var client = new ServiceBusClient(serviceBusConnectionString);
         checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
+        orderUpdatePaymentStatusProcessor = client.CreateProcessor(orderUpdatePaymentResultTopic, subscriptionCheckout);
     }
 
     public async Task Start()
     {
-        checkOutProcessor.ProcessMessageAsync += OnCeckOutMessageReceived;
+        checkOutProcessor.ProcessMessageAsync += OnCheckOutMessageReceived;
         checkOutProcessor.ProcessErrorAsync += ErrorHandler;
         await checkOutProcessor.StartProcessingAsync();
+        
+        orderUpdatePaymentStatusProcessor.ProcessMessageAsync += OnOrderPaymentUpdateReceived;
+        orderUpdatePaymentStatusProcessor.ProcessErrorAsync += ErrorHandler;
+        await orderUpdatePaymentStatusProcessor.StartProcessingAsync();
     }
 
     public async Task Stop()
     {
         await checkOutProcessor.StopProcessingAsync();
         await checkOutProcessor.DisposeAsync();
+        
+        await orderUpdatePaymentStatusProcessor.StopProcessingAsync();
+        await orderUpdatePaymentStatusProcessor.DisposeAsync();
     }
 
     Task ErrorHandler(ProcessErrorEventArgs args)
@@ -56,7 +67,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         return Task.CompletedTask;
     }
 
-    private async Task OnCeckOutMessageReceived(ProcessMessageEventArgs args)
+    private async Task OnCheckOutMessageReceived(ProcessMessageEventArgs args)
     {
         var message = args.Message;
         var body = Encoding.UTF8.GetString(message.Body);
@@ -117,5 +128,18 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
             Console.WriteLine(ex);
             throw;
         }
+    }
+
+    private async Task OnOrderPaymentUpdateReceived(ProcessMessageEventArgs args)
+    {
+        var message = args.Message;
+        var body = Encoding.UTF8.GetString(message.Body);
+
+        UpdatePaymentResultMessage paymentResultMessage 
+            = JsonSerializer.Deserialize<UpdatePaymentResultMessage>(body,
+            new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+
+        await _orderRepository.UpdateOrderPaymentStatus(paymentResultMessage.OrderId, paymentResultMessage.Status);
+        await args.CompleteMessageAsync(args.Message);
     }
 }
