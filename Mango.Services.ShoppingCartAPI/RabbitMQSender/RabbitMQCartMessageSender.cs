@@ -21,17 +21,41 @@ public class RabbitMQCartMessageSender : IRabbitMQCartMessageSender
     
     public void SendMessage(BaseMessage message, string queueName)
     {
-        var factory = new ConnectionFactory
+        if (ConnectionExist())
         {
-            HostName = _hostname,
-            UserName = _username,
-            Password = _password
-        };
-        _connection = factory.CreateConnection();
-        using var channel = _connection.CreateModel();
-        channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
-        var json = JsonSerializer.Serialize(message, message.GetType());
-        var body = Encoding.UTF8.GetBytes(json);
-        channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties:null, body: body);
+            using var channel = _connection.CreateModel();
+            channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
+            var json = JsonSerializer.Serialize(message, message.GetType());
+            var body = Encoding.UTF8.GetBytes(json);
+            channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+        }
+    }
+
+    private void CreateConnection()
+    {
+        try
+        {
+            var factory = new ConnectionFactory
+            {
+                HostName = _hostname,
+                UserName = _username,
+                Password = _password
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    private bool ConnectionExist()
+    {
+        if (_connection != null)
+        {
+            return true;
+        }
+        CreateConnection();
+        return _connection != null;
     }
 }

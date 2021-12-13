@@ -8,13 +8,13 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Repository;
 
-public class RabbitMQConsumer : BackgroundService
+public class RabbitMqCheckoutConsumer : BackgroundService
 {
     private readonly OrderRepository _orderRepository;
     private IConnection _connection;
     private IModel _channel;
 
-    public RabbitMQConsumer(OrderRepository orderRepository)
+    public RabbitMqCheckoutConsumer(OrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
 
