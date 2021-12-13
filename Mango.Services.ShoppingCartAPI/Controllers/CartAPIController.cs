@@ -4,6 +4,7 @@ using MessageBus;
 using Messages;
 using Microsoft.AspNetCore.Mvc;
 using Models.Dto;
+using RabbitMQSender;
 using Repository;
 
 [ApiController]
@@ -12,14 +13,16 @@ public class CartAPIController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
     private readonly ICouponRepository _couponRepository;
+    private readonly IRabbitMQCartMessageSender _rabbitMqCartMessageSender;
     private readonly IMessageBus _messageBus;
     protected ResponseDto _response;
 
-    public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
+    public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository, IRabbitMQCartMessageSender rabbitMqCartMessageSender)
     {
         _cartRepository = cartRepository;
         _messageBus = messageBus;
         _couponRepository = couponRepository;
+        _rabbitMqCartMessageSender = rabbitMqCartMessageSender;
         this._response = new ResponseDto();
     }
 
@@ -151,7 +154,10 @@ public class CartAPIController : ControllerBase
 
             checkoutHeader.CartDetails = cartDto.CartDetails;
             // logic to add message to process order
-            await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue");
+            //await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue");
+            
+            // rabitMQ
+            _rabbitMqCartMessageSender.SendMessage(checkoutHeader, "checkoutqueue");
             await _cartRepository.ClearCart(checkoutHeader.UserId);
         }
         catch (Exception ex)
