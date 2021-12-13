@@ -17,7 +17,7 @@ public class CartService : BaseService, ICartService
         return await this.SendAsync<T>(new ApiRequest()
         {
             ApiType = SD.ApiType.GET,
-            Url = SD.ShoppingCartAPIBase + "api/cart/GetCart/" + userId,
+            Url = SD.ShoppingCartAPIBase + "/api/cart/GetCart/" + userId,
             AccessToken = token
         });
     }
@@ -28,7 +28,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartDto,
-            Url = SD.ShoppingCartAPIBase + "api/Cart/AddCart",
+            Url = SD.ShoppingCartAPIBase + "/api/Cart/AddCart",
             AccessToken = token
         });
     }
@@ -39,7 +39,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartDto,
-            Url = SD.ShoppingCartAPIBase + "api/cart/UpdateCart",
+            Url = SD.ShoppingCartAPIBase + "/api/cart/UpdateCart",
             AccessToken = token
         });
     }
@@ -50,7 +50,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartId,
-            Url = SD.ShoppingCartAPIBase + "api/cart/RemoveCart",
+            Url = SD.ShoppingCartAPIBase + "/api/cart/RemoveCart",
             AccessToken = token
         });
     }
@@ -61,7 +61,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartDto,
-            Url = SD.ShoppingCartAPIBase + "api/cart/ApplyCoupon",
+            Url = SD.ShoppingCartAPIBase + "/api/cart/ApplyCoupon",
             AccessToken = token
         });
     }
@@ -72,7 +72,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = userId,
-            Url = SD.ShoppingCartAPIBase + "api/cart/RemoveCoupon",
+            Url = SD.ShoppingCartAPIBase + "/api/cart/RemoveCoupon",
             AccessToken = token
         });
     }
@@ -83,7 +83,7 @@ public class CartService : BaseService, ICartService
         {
             ApiType = SD.ApiType.POST,
             Data = cartHeader,
-            Url = SD.ShoppingCartAPIBase + "api/cart/checkout",
+            Url = SD.ShoppingCartAPIBase + "/api/cart/checkout",
             AccessToken = token
         });
     }
