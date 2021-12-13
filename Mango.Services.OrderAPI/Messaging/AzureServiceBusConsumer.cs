@@ -37,7 +37,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         orderUpdatePaymentResultTopic = _configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
 
         var client = new ServiceBusClient(serviceBusConnectionString);
-        checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
+        checkOutProcessor = client.CreateProcessor(checkoutMessageTopic);
         orderUpdatePaymentStatusProcessor = client.CreateProcessor(orderUpdatePaymentResultTopic, subscriptionCheckout);
     }
 
@@ -115,7 +115,8 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
             CVV = orderHeader.CVV,
             ExpiryMonthYear = orderHeader.ExpiryMonthYear,
             OrderId = orderHeader.OrderHeaderId,
-            OrderTotal = orderHeader.OrderTotal
+            OrderTotal = orderHeader.OrderTotal,
+            Email = orderHeader.Email
         };
 
         try
