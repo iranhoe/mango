@@ -6,6 +6,7 @@ using Messages;
 using Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQSender;
 using Repository;
 
 public class RabbitMqCheckoutConsumer : BackgroundService
@@ -13,10 +14,12 @@ public class RabbitMqCheckoutConsumer : BackgroundService
     private readonly OrderRepository _orderRepository;
     private IConnection _connection;
     private IModel _channel;
+    private readonly IRabbitMqOrderMessageSender _rabbitMqOrderMessageSender;
 
-    public RabbitMqCheckoutConsumer(OrderRepository orderRepository)
+    public RabbitMqCheckoutConsumer(OrderRepository orderRepository, IRabbitMqOrderMessageSender rabbitMqOrderMessageSender)
     {
         _orderRepository = orderRepository;
+        _rabbitMqOrderMessageSender = rabbitMqOrderMessageSender;
 
         var factory = new ConnectionFactory
         {
@@ -100,6 +103,7 @@ public class RabbitMqCheckoutConsumer : BackgroundService
         {
             // await _messageBus.PublishMessage(paymentRequestMessage, orderPaymentProcessTopic);
             // await args.CompleteMessageAsync(args.Message);
+            _rabbitMqOrderMessageSender.SendMessage(paymentRequestMessage, "orderpaymentprocesstopic");
         }
         catch (Exception ex)
         {

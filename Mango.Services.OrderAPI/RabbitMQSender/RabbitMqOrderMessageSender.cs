@@ -1,18 +1,18 @@
-﻿namespace Mango.Services.ShoppingCartAPI.RabbitMQSender;
+﻿namespace Mango.Services.OrderAPI.RabbitMQSender;
 
 using System.Text;
 using System.Text.Json;
 using MessageBus;
 using RabbitMQ.Client;
 
-public class RabbitMQCartMessageSender : IRabbitMQCartMessageSender
+public class RabbitMqOrderMessageSender : IRabbitMqOrderMessageSender
 {
     private readonly string _hostname;
     private readonly string _password;
     private readonly string _username;
     private IConnection _connection;
 
-    public RabbitMQCartMessageSender()
+    public RabbitMqOrderMessageSender()
     {
         _hostname = "localhost";
         _password = "guest";
