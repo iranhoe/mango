@@ -1,5 +1,6 @@
 ﻿namespace Mango.Services.ShoppingCartAPI.RabbitMQSender;
 
+using System.Text;
 using System.Text.Json;
 using MessageBus;
 using RabbitMQ.Client;
@@ -29,7 +30,8 @@ public class RabbitMQCartMessageSender : IRabbitMQCartMessageSender
         _connection = factory.CreateConnection();
         using var channel = _connection.CreateModel();
         channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
-        var body = JsonSerializer.SerializeToUtf8Bytes(message);
+        var json = JsonSerializer.Serialize(message, message.GetType());
+        var body = Encoding.UTF8.GetBytes(json);
         channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties:null, body: body);
     }
 }
