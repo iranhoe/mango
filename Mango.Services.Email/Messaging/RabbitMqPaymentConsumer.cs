@@ -11,7 +11,8 @@ public class RabbitMqPaymentConsumer : BackgroundService
 {
     private IConnection _connection;
     private IModel _channel;
-    private const string ExchangeName = "PublishSubscribePaymentUpdate_Exchange";
+    private const string ExchangeName = "DirectPaymentUpdate_Exchange";
+    private const string PaymentEmailUpdateQueueName = "PaymentEmailUpdateQueueName";
     private readonly EmailRepository _emailRepo;
     private string queueName = "";
 
@@ -27,9 +28,10 @@ public class RabbitMqPaymentConsumer : BackgroundService
 
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout);
-        queueName = _channel.QueueDeclare().QueueName;
-        _channel.QueueBind(queueName, ExchangeName, "");
+        
+        _channel.ExchangeDeclare(ExchangeName, ExchangeType.Direct);
+        _channel.QueueDeclare(PaymentEmailUpdateQueueName, false, false, false, null);
+        _channel.QueueBind(PaymentEmailUpdateQueueName, ExchangeName, "PaymentEmail");
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,7 +49,7 @@ public class RabbitMqPaymentConsumer : BackgroundService
             
             _channel.BasicAck(ea.DeliveryTag, false);
         };
-        _channel.BasicConsume(queueName, false, consumer);
+        _channel.BasicConsume(PaymentEmailUpdateQueueName, false, consumer);
 
         return Task.CompletedTask;
     }
