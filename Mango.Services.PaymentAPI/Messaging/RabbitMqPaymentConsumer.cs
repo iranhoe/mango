@@ -65,6 +65,7 @@ public class RabbitMqPaymentConsumer : BackgroundService
 
         try
         {
+            _rabbitMqPaymentMessageSender.SendMessage(updatePaymentResultMessage);
             // await _messageBus.PublishMessage(updatePaymentResultMessage, orderUpdatePaymentResultTopic);
             // await args.CompleteMessageAsync(args.Message);
         }

@@ -4,5 +4,5 @@ using MessageBus;
 
 public interface IRabbitMqPaymentMessageSender
 {
-    void SendMessage(BaseMessage baseMessage, string queueName);
+    void SendMessage(BaseMessage baseMessage);
 }
